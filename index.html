@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft VS Roblox Intro</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    background:#87CEEB;
+}
+
+#scene{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+}
+
+.ground{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:180px;
+    background:
+    linear-gradient(#4CAF50 0 40px,#6D4C41 40px);
+}
+
+.sprite{
+    position:absolute;
+    user-select:none;
+    pointer-events:none;
+}
+
+#minecraft{
+    width:180px;
+    left:-250px;
+    bottom:180px;
+    transition:all 1.5s ease;
+}
+
+#roblox{
+    width:180px;
+    right:120px;
+    bottom:180px;
+    transition:all 1s ease;
+}
+
+#mace,#gun,#totem,#sword{
+    width:100px;
+    display:none;
+}
+
+#laser{
+    position:absolute;
+    height:12px;
+    display:none;
+    background:linear-gradient(
+    90deg,
+    transparent,
+    cyan,
+    white,
+    cyan,
+    transparent
+    );
+    box-shadow:0 0 20px cyan;
+}
+
+#flash{
+    position:absolute;
+    inset:0;
+    background:white;
+    opacity:0;
+}
+
+#win{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:90px;
+    font-weight:bold;
+    color:white;
+    text-shadow:0 0 30px gold;
+    opacity:0;
+    transition:1s;
+}
+
+.particle{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:orange;
+    border-radius:50%;
+}
+</style>
+</head>
+<body>
+
+<div id="scene">
+
+<div class="ground"></div>
+
+<img id="minecraft" class="sprite" src="minecraft.png">
+<img id="roblox" class="sprite" src="roblox.png">
+
+<img id="mace" class="sprite" src="mace.png">
+<img id="gun" class="sprite" src="gun.png">
+<img id="totem" class="sprite" src="totem.png">
+<img id="sword" class="sprite" src="sword.png">
+
+<div id="laser"></div>
+<div id="flash"></div>
+
+<div id="win">
+MINECRAFT WIN
+</div>
+
+</div>
+
+<script>
+
+const mc=document.getElementById("minecraft");
+const rb=document.getElementById("roblox");
+const mace=document.getElementById("mace");
+const gun=document.getElementById("gun");
+const totem=document.getElementById("totem");
+const sword=document.getElementById("sword");
+const laser=document.getElementById("laser");
+const flash=document.getElementById("flash");
+const win=document.getElementById("win");
+
+function wait(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
+
+function shake(){
+    let count=0;
+
+    const interval=setInterval(()=>{
+        document.body.style.transform=
+        `translate(${Math.random()*12-6}px,
+        ${Math.random()*12-6}px)`;
+
+        count++;
+
+        if(count>15){
+            clearInterval(interval);
+            document.body.style.transform="";
+        }
+
+    },30);
+}
+
+function explosion(x,y){
+
+    for(let i=0;i<80;i++){
+
+        const p=document.createElement("div");
+        p.className="particle";
+
+        p.style.left=x+"px";
+        p.style.top=y+"px";
+
+        document.body.appendChild(p);
+
+        const dx=(Math.random()-0.5)*500;
+        const dy=(Math.random()-0.5)*500;
+
+        p.animate([
+        {transform:"translate(0,0)",opacity:1},
+        {transform:`translate(${dx}px,${dy}px)`,opacity:0}
+        ],{
+        duration:1200,
+        easing:"ease-out"
+        });
+
+        setTimeout(()=>p.remove(),1200);
+    }
+}
+
+async function play(){
+
+    // 飛進場
+
+    mc.style.left="100px";
+    await wait(1600);
+
+    // 起飛
+
+    mc.style.bottom="420px";
+    await wait(1300);
+
+    // 重捶
+
+    mace.style.display="block";
+    mace.style.left="240px";
+    mace.style.top="180px";
+
+    mace.animate([
+        {transform:"rotate(0deg)"},
+        {transform:"rotate(1080deg)"}
+    ],{
+        duration:1000
+    });
+
+    await wait(800);
+
+    mc.style.left="650px";
+    mace.style.left="760px";
+
+    await wait(1200);
+
+    shake();
+
+    rb.style.transform="translateX(80px) rotate(20deg)";
+
+    await wait(1200);
+
+    // 雷射槍
+
+    gun.style.display="block";
+    gun.style.right="220px";
+    gun.style.bottom="260px";
+
+    await wait(1000);
+
+    // 雷射
+
+    laser.style.display="block";
+    laser.style.width="750px";
+    laser.style.right="280px";
+    laser.style.bottom="300px";
+
+    flash.style.opacity="0.4";
+
+    await wait(300);
+
+    flash.style.opacity="0";
+
+    await wait(800);
+
+    mc.style.opacity="0.2";
+
+    // 圖騰
+
+    totem.style.display="block";
+    totem.style.left="600px";
+    totem.style.top="180px";
+
+    await wait(1200);
+
+    mc.style.opacity="1";
+    mc.style.filter=
+    "drop-shadow(0 0 25px gold)";
+
+    await wait(1200);
+
+    // 鑽石型態
+
+    mc.style.filter=
+    "drop-shadow(0 0 40px cyan)";
+
+    // 劍
+
+    sword.style.display="block";
+    sword.style.left="700px";
+    sword.style.top="240px";
+
+    await wait(600);
+
+    mc.style.transition="all .4s linear";
+    mc.style.left="1000px";
+
+    await wait(400);
+
+    rb.style.opacity="0";
+
+    explosion(
+        window.innerWidth-250,
+        window.innerHeight-280
+    );
+
+    await wait(2000);
+
+    win.style.opacity="1";
+
+    await wait(3000);
+
+    // 自動跳首頁
+    window.location.href="home.html";
+
+}
+
+play();
+
+</script>
+
+</body>
+</html>
